@@ -75,7 +75,7 @@ renderTile d p jump hole position Peg   = (circle 0.75 # fc tileColour) `atop` l
       | jump == position = white
       | otherwise        = white
 
-tileBack = strutX 2 `atop` strutY 2 -- square 2 # fc greenyellow # lw 0
+tileBack = strutX 2 `atop` strutY 2
 
 links (x,y) = ((rotateBy (1/4) (line north ||| line south)) # centerY) `atop`
               ((line west  ||| line east) # centerX)

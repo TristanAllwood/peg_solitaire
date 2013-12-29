@@ -15,7 +15,8 @@ renderedSolutionBoards = zipWith renderBoard solutionBoards (solution ++ [((0,0)
 
 staircase
   = vcat' spacing
-         [ left b1
+         [ left b0
+         , left b1
          , five b2 b3 b4 b5 b6
          , right b7
          , five b12 b11 b10 b9 b8
@@ -37,7 +38,21 @@ staircase
 
     five a b c d e = hcat' spacing [a,b,c,d,e] # centerX
 
+    b0 = renderBoard startingBoard ((0,0), South)
     [b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19,b20,b21,b22,b23,b24,b25,b26,b27,b28,b29,b30,b31,b32 ] = renderedSolutionBoards
+
+spiral
+  = mconcat [ b # translate (r2 (x,y))
+            | (i,b) <- [0..] `zip` boardPics
+            , let a = (width b * 2)
+            , let theta = 2 * pi * (i / 16)
+            , let r = a * sqrt theta
+            , let x = r * cos theta
+            , let y = r * sin theta
+            ]
+  where
+    boardPics = b0 : renderedSolutionBoards
+    b0 = renderBoard startingBoard ((0,0), South)
 
 
 renderBoard board (p, d)
@@ -61,8 +76,9 @@ renderBoard board (p, d)
 attach n1 n2
   = withName n1 $ \b1 ->
     withName n2 $ \b2 ->
-      atop (((location b1 ~~ location b2) # lc grey # lw 0.1) `atop` (circle 0.2 # fc grey # moveTo (location b2)))
-
+      atop (((location b1 ~~ location b2) # lc red # lw 0.2)
+        `atop` (circle 0.2 # fc red # moveTo (location b1)
+        `atop` (circle 0.15 # fc red # moveTo (location b2))))
 renderTile _ _ _ _ _ Blank = tileBack
 renderTile d p jump hole position Hole  = (circle 0.75 # fc holeColour) `atop` links position `atop` tileBack
   where
@@ -72,7 +88,7 @@ renderTile d p jump hole position Peg   = (circle 0.75 # fc tileColour) `atop` l
   where
     tileColour
       | p == position    = grey
-      | jump == position = white
+      | jump == position = grey
       | otherwise        = white
 
 tileBack = strutX 2 `atop` strutY 2
